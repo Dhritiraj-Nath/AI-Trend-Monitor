@@ -1,5 +1,9 @@
 id: global_trend_monitor
 namespace: demo.monitor
+variables:
+  # PASTE YOUR VERCEL HOOK URL HERE
+  vercel_deploy_hook_url: "https://api.vercel.com/v1/integrations/deploy/prj_xREkHaSMPfpKHMkQm7ZPyXOeTC3F/iHAGeE2RQq"
+
 tasks:
   # 1. READ SIMULATED RAW DATA
   - id: read_raw_data
@@ -15,7 +19,7 @@ tasks:
       - text: |
           Analyze the raw news data below. Identify the top 3 emerging global trends.
           Format your output STRICTLY as a JSON array of objects with the keys:
-          "trend_name" (short title), "summary" (100-word summary), and "category" (single word like 'TECH', 'REGULATION', 'CLIMATE').
+          "trend_name", "summary", and "category".
           Raw Data: {{ outputs.read_raw_data.value }}
     format: JSON
 
@@ -24,6 +28,16 @@ tasks:
     type: io.kestra.plugin.core.storage.CreateFile
     filename: trend-report.json
     contents: "{{ outputs.analyze_trends.text }}"
+
+  # 4. TRIGGER VERCEL DEPLOYMENT (Final Step!)
+  - id: trigger_vercel_deploy
+    type: io.kestra.plugin.core.http.Request
+    uri: "{{ vars.vercel_deploy_hook_url }}"
+    method: POST
+    body: |
+      {
+        "message": "New AI Trend Report Published"
+      }
 
 triggers:
   - id: daily_schedule
