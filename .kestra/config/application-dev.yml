@@ -1,0 +1,17 @@
+kestra:
+  # KESTRA CONFIGURATION FIX: Specifies internal components for single-container use
+  queue:
+    type: "h2"
+  repository:
+    type: "h2"
+  storage:
+    type: "local"
+
+  # GEMINI CONFIGURATION: Your API Key
+  plugins:
+    google:
+      client:
+        default:
+          type: "gemini"
+          gemini:
+            apiKey: AIzaSyCIlMLmR9Yb2zlkrdOa80v7KmmaCoShn5s
